@@ -1,0 +1,8 @@
+{% extends 'movies/base.html' %}
+{% block content %}
+<div class="text-center mt-5">
+    <h2 class="text-success">✅ Сообщение отправлено!</h2>
+    <p>Мы получили ваше письмо и скоро ответим. Уведомление уже улетело в Telegram.</p>
+    <a href="{% url 'index' %}" class="btn btn-outline-warning">На главную</a>
+</div>
+{% endblock %}

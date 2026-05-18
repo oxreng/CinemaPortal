@@ -1,0 +1,9 @@
+{% extends 'movies/base.html' %}
+{% block title %}Успех!{% endblock %}
+{% block content %}
+<div class="text-center">
+    <h1>Регистрация прошла успешно!</h1>
+    <p>Спасибо!</p>
+    <a href="{% url 'index' %}" class="btn btn-primary">Вернуться на главную</a>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'movies/base.html' %}
+{% block title %}CinemaPortal — Главная{% endblock %}
+
+{% block content %}
+  <!-- Герой-блок, как был в оригинале -->
+  <div class="hero">
+    <h1>Добро пожаловать в <span style="color: #f7c948;">CinemaPortal</span></h1>
+    <h2 class="lead">Фильмы. Трейлеры. Покупка билетов.</h2>
+  </div>
+
+  <!-- Заголовок секции -->
+  <h3 class="section-title">Сейчас в кино</h3>
+
+  <div class="row">
+    {% for movie in movies %}
+      <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+        <div class="card h-100 movie-card">
+          <a href="{% url 'movie_detail' movie.id %}" class="text-decoration-none">
+            <img src="{{ movie.poster }}" class="card-img-top" alt="{{ movie.title }}">
+          </a>
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ movie.title }}</h5>
+            <p class="card-text text-muted small">{{ movie.genre }} • {{ movie.year }}</p>
+
+            <!-- Добавили описание, как было раньше, с обрезкой текста -->
+            <p class="card-text" style="flex:1;">
+              {{ movie.description|truncatewords:15 }} {# Django обрежет текст до 15 слов #}
+            </p>
+
+            <a href="{% url 'movie_detail' movie.id %}" class="btn btn-warning mt-auto">Подробнее</a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12"><p>Фильмы пока не добавлены в базу данных.</p></div>
+    {% endfor %}
+  </div>
+{% endblock %}

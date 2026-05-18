@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # 1. Микросервис Базы Данных (PostgreSQL)
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: cinema_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpassword
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 2. Основной микросервис (Django)
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - db
+      - bot
+
+  # 3. Микросервис Бота (Flask)
+  bot:
+    build: .
+    command: python bot_service.py
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
+    environment:
+      - PYTHONUNBUFFERED=1
+
+# Место, где Docker будет хранить данные базы, чтобы они не удалялись
+volumes:
+  postgres_data:

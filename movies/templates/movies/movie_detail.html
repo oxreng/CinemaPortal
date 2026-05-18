@@ -1,0 +1,93 @@
+{% extends 'movies/base.html' %}
+{% block title %}{{ movie.title }} — CinemaPortal{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <img src="{{ movie.poster }}" class="img-fluid mb-3 rounded shadow" alt="{{ movie.title }}">
+        <div class="card bg-dark text-light border-secondary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Информация</h5>
+                <hr>
+                <p><strong>Жанр:</strong> {{ movie.genre }}</p>
+                <p><strong>Год:</strong> {{ movie.year }}</p>
+                <p><strong>Длительность:</strong> {{ movie.duration }} мин.</p>
+                <p><strong>Рейтинг:</strong> {{ movie.rating }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <h1>{{ movie.title }}</h1>
+        <p class="lead">{{ movie.description|linebreaks }}</p>
+
+        {% if movie.trailer %}
+        <h3 class="mt-4">Трейлер</h3>
+        <div class="ratio ratio-16x9">
+            <iframe src="{{ movie.trailer }}" allowfullscreen title="Трейлер"></iframe>
+        </div>
+        {% endif %}
+
+        <div class="mt-4">
+            <a href="#" class="btn btn-warning btn-lg me-2">Купить билет</a>
+
+            {% if user.is_authenticated %}
+            <button id="like-btn"
+                    class="btn {% if user in movie.likes.all %}btn-danger{% else %}btn-outline-danger{% endif %} btn-lg">
+                {% if user in movie.likes.all %}❤️ Лайкнуто{% else %}🤍 Поставить лайк{% endif %}
+            </button>
+            {% else %}
+            <a href="{% url 'register' %}" class="btn btn-outline-danger btn-lg">🤍 Войдите, чтобы лайкнуть</a>
+            {% endif %}
+
+            <span id="like-count" class="ms-2 fs-4 align-middle text-warning">{{ movie.total_likes }}</span>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+    const likeBtn = document.getElementById('like-btn');
+    const likeCount = document.getElementById('like-count');
+    const movieId = "{{ movie.id }}";
+
+    if (likeBtn && likeBtn.tagName === 'BUTTON') {
+        likeBtn.addEventListener('click', function() {
+            fetch(`/movie/${movieId}/like/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error === "not_authenticated") {
+                    window.location.href = "{% url 'register' %}";
+                } else {
+                    // Переключаем внешний вид кнопки
+                    if (data.is_liked) {
+                        likeBtn.innerText = "❤️ Лайкнуто";
+                        likeBtn.classList.replace('btn-outline-danger', 'btn-danger');
+                    } else {
+                        likeBtn.innerText = "🤍 Поставить лайк";
+                        likeBtn.classList.replace('btn-danger', 'btn-outline-danger');
+                    }
+                    likeCount.innerText = data.likes;
+                }
+            });
+        });
+    }
+
+// Polling (обновление счетчика раз в 5 сек)
+    setInterval(function() {
+        // Меняем URL на тот, который просто отдает цифру лайков
+        fetch(`/movie/${movieId}/get_likes/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Обновляем текст на актуальное количество лайков из базы
+                likeCount.innerText = data.likes_count;
+            }
+        })
+        .catch(error => console.error('Ошибка Polling:', error)); // Ловим ошибки, чтобы консоль не засорялась
+    }, 5000);
+</script>
+{% endblock %}
