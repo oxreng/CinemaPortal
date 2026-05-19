@@ -70,13 +70,15 @@ WSGI_APPLICATION = 'CinemaPortal.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-import os
-import dj_database_url # Установи эту библиотеку: pip install dj_database_url
-
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL')
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'cinema_db',
+        'USER': 'admin',
+        'PASSWORD': 'adminpassword',
+        'HOST': 'db',  # Имя сервиса базы данных из docker-compose
+        'PORT': '5432',
+    }
 }
 
 

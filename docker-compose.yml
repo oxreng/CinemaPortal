@@ -11,7 +11,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  # 2. Основной микросервис (Django)
+
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
@@ -21,9 +21,10 @@ services:
       - "8000:8000"
     environment:
       - PYTHONUNBUFFERED=1
+      # ВОТ ЭТА СТРОКА РЕШАЕТ ПРОБЛЕМУ:
+      - DATABASE_URL=postgres://admin:adminpassword@db:5432/cinema_db
     depends_on:
       - db
-      - bot
 
   # 3. Микросервис Бота (Flask)
   bot:
