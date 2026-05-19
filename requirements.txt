@@ -4,3 +4,4 @@ requests
 psycopg2-binary
 flask
 dj-database-url
+psycopg2-binary
