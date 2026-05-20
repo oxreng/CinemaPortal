@@ -81,18 +81,6 @@ DATABASES = {
     }
 }
 
-
-'''DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'cinema_db',
-        'USER': 'admin',
-        'PASSWORD': 'adminpassword',
-        'HOST': 'db',  # Имя контейнера базы данных из docker-compose
-        'PORT': '5432',
-    }
-}'''
-
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
